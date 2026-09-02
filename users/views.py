@@ -28,3 +28,4 @@ def user_logout(request):
 @login_required
 def index(request):
     return render(request, 'users/index.html')
+
