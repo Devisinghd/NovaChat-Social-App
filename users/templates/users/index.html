@@ -3,4 +3,14 @@
 {% block body %}
     <h1>Welcome to NovaChat!</h1>
     <p>This is the home page.</p>
+    {% for post in posts %}
+        <div>
+            <h1>{{ post.user.username }}</h1>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post Image">
+            {% endif %}
+        </div>
+    {% endfor %}
 {% endblock %}
