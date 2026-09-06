@@ -45,3 +45,9 @@ htmlcov/
 Thumbs.db
 
 migrations/
+
+# Frontend dependencies
+node_modules/
+
+# Compiled Tailwind CSS build artifact
+users/static/users/styles.css
