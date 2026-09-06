@@ -1,0 +1,24 @@
+{
+  "name": "novachat",
+  "version": "1.0.0",
+  "description": "<h1> Django Starter Template </h1>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tailwind build ./users/static/users/tw.css -o ./users/static/users/styles.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Devisinghd/NovaChat-Social-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Devisinghd/NovaChat-Social-App/issues"
+  },
+  "homepage": "https://github.com/Devisinghd/NovaChat-Social-App#readme",
+  "dependencies": {
+    "tailwindcss": "^2.2.16"
+  }
+}
