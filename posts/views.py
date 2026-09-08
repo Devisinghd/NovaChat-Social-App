@@ -11,7 +11,7 @@ def create_post(request):
             post = form.save(commit=False)
             post.user = request.user
             post.save()
-            return redirect('users/index')  # Redirect to the user's index page after creating the post
+            return redirect('users/index')
     else:
         form = PostForm()
     return render(request, 'posts/create_post.html', {'form': form})
