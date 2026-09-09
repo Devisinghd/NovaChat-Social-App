@@ -1,5 +1,5 @@
 {% extends 'users/base.html' %}
-
+{% load static %}
 {% block title %}Home | NovaChat{% endblock %}
 
 {% block body %}
@@ -7,6 +7,21 @@
         <p class="eyebrow">Your community, your moments</p>
         <h1>Welcome to NovaChat</h1>
         <p>See what you have shared recently.</p>
+        <div class="profile-info flex">
+            <img class="profile-picture rounded-full h-10 w-10" src="{{ profile.photo.url }}" alt="Profile Picture">
+            <div class="profile-details flex flex-col">
+                <span class="font-bold">{{ profile.user.username }}</span>
+            </div>
+            <div class='px-6 py-4 bg-gray-200 rounded-full flex items-center'>
+                <img class="icon w-5 h-5" src="{% static 'users/images/like-icon.png' %}" alt="Profile Icon">
+                <img class="icon w-5 h-5" src="{% static 'users/images/comment-icon.png' %}" alt="Comment Icon">
+                <img class="icon w-5 h-5" src="{% static 'users/images/share-icon.png' %}" alt="Share Icon">
+            </div>
+            <div>
+                <div>{{post.title}}</div>
+                <p>{{post.caption}}</p>
+            </div>
+        </div>
     </header>
     <section class="post-feed" aria-label="Your posts">
     {% for post in posts %}
