@@ -1,5 +1,8 @@
 {% extends 'users/base.html' %}
 
 {% block body %}
-    <h1>You have been logged out.</h1>
+    <h1>Logout</h1>
+    <p>You have been logged out.</p>
+    <a href="{% url 'login' %}" class="text-blue-500 hover:text-blue-700">Login again</a>
+    <a href="{% url 'home' %}" class="text-blue-500 hover:text-blue-700">Return to Home</a>
 {% endblock %}
