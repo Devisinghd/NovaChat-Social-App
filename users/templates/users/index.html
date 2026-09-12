@@ -1,28 +1,16 @@
 {% extends 'users/base.html' %}
 {% load static %}
-{% block title %}Home | NovaChat{% endblock %}
+{% block title %}Overview | NovaChat{% endblock %}
+{% block section_name %}Overview{% endblock %}
 
 {% block body %}
     <header class="page-heading">
-        <p class="eyebrow">Your community, your moments</p>
-        <h1>Welcome to NovaChat</h1>
-        <p>See what you have shared recently.</p>
-        <div class="profile-info flex">
-            <img class="profile-picture rounded-full h-10 w-10" src="{{ profile.photo.url }}" alt="Profile Picture">
-            <div class="profile-details flex flex-col">
-                <span class="font-bold">{{ profile.user.username }}</span>
-            </div>
-            <div class='px-6 py-4 bg-gray-200 rounded-full flex items-center'>
-                <img class="icon w-5 h-5" src="{% static 'users/images/like-icon.png' %}" alt="Profile Icon">
-                <img class="icon w-5 h-5" src="{% static 'users/images/comment-icon.png' %}" alt="Comment Icon">
-                <img class="icon w-5 h-5" src="{% static 'users/images/share-icon.png' %}" alt="Share Icon">
-            </div>
-            <div>
-                <div>{{post.title}}</div>
-                <p>{{post.caption}}</p>
-            </div>
-        </div>
+        <div class="hero-orb" aria-hidden="true"><span class="orb-core"></span><span class="orb-ring ring-a"></span><span class="orb-ring ring-b"></span></div>
+        <p class="eyebrow">Personal workspace / 01</p>
+        <h1>Make space for the moments that matter.</h1>
+        <p>Your latest thoughts, captured in one calm place.</p>
     </header>
+    <div class="feed-layout">
     <section class="post-feed" aria-label="Your posts">
     {% for post in posts %}
         <article class="post-card">
@@ -42,8 +30,16 @@
     {% empty %}
         <div class="empty-state">
             <h2>Your feed is quiet</h2>
-            <p>Create your first post to see it here.</p>
+            <p>Create your first moment to see it here.</p>
+            <a class="primary-button" href="{% url 'create_post' %}"><i class="fa-solid fa-plus"></i> Create a moment</a>
         </div>
     {% endfor %}
     </section>
+    <aside class="quick-panel">
+        <p class="eyebrow">Signal / today</p>
+        <h3>Keep the thread alive.</h3>
+        <p>Small updates become a story. Share what is on your mind while it is fresh.</p>
+        <a class="primary-button" href="{% url 'create_post' %}"><i class="fa-solid fa-feather-pointed"></i> New moment</a>
+    </aside>
+    </div>
 {% endblock %}

@@ -1,8 +1,12 @@
 {% extends 'users/base.html' %}
 
+{% block title %}Profile | NovaChat{% endblock %}
+{% block section_name %}Profile{% endblock %}
 {% block body %}
-    <h1 class="text-2xl font-bold mb-4">Edit Profile</h1>
-    <div>
+    <div class="form-panel">
+        <p class="eyebrow">Identity / 03</p>
+        <h1>Shape your profile</h1>
+        <p>Keep the details that make your space feel like yours.</p>
         <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group block text-gray-700 font-bold mb-2">
@@ -21,8 +25,8 @@
             <label for="id_profile_picture">Profile Picture</label>
             {{ profile_form.photo }}
         </div>
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Save Changes
+        <button type="submit">
+            <i class="fa-solid fa-check"></i> Save changes
         </button>
     </form>
     </div>
