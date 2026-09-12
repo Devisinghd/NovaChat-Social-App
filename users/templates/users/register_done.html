@@ -1,6 +1,9 @@
 {% extends 'users/base.html' %}
 
-{% block body %}
-    <h1>Registration successful</h1>
-    <p>Your account has been created successfully. You can now <a href="{% url 'login' %}">log in</a>.</p>
+{% block title %}Welcome | NovaChat{% endblock %}
+{% block section_name %}Welcome{% endblock %}
+{% block body %}<div class="auth-layout"><div class="auth-card">
+    <p class="eyebrow">You're in / 01</p><h1>Welcome to your space.</h1><p>Your account is ready. Start with a thought, a photo, or a small moment worth keeping.</p>
+    <a class="primary-button" href="{% url 'login' %}"><i class="fa-solid fa-arrow-right"></i> Continue to sign in</a>
+</div></div>
 {% endblock %}

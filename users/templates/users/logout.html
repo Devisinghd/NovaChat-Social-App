@@ -1,0 +1,4 @@
+{% extends 'users/base.html' %}
+{% block title %}Signed Out | NovaChat{% endblock %}
+{% block section_name %}Signed out{% endblock %}
+{% block body %}<div class="auth-layout"><div class="auth-card"><p class="eyebrow">Session complete</p><h1>See you soon.</h1><p>You have been signed out of NovaChat.</p><a class="primary-button" href="{% url 'login' %}"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign in again</a></div></div>{% endblock %}
