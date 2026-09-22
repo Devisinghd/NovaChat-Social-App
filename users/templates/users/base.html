@@ -13,6 +13,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="{% static 'users/styles.css' %}">
         <link rel="stylesheet" href="{% static 'users/style.css' %}">
+        <link rel="stylesheet" href="{% static 'users/feed.css' %}">
         <script src="https://code.jquery.com/jquery-4.0.0.js" integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>
     </head>
     <body>
@@ -41,7 +42,10 @@
                             <span class="user-chip-copy"><strong>{{ request.user.username }}</strong><small>Personal space</small></span>
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>
-                        <a class="nav-item logout-link" href="{% url 'logout' %}"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Sign out</span></a>
+                        <form class="logout-form" method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button class="nav-item logout-link" type="submit"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Sign out</span></button>
+                        </form>
                     {% else %}
                         <a class="nav-item" href="{% url 'login' %}"><i class="fa-solid fa-arrow-right-to-bracket"></i><span>Sign in</span></a>
                     {% endif %}
