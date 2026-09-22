@@ -12,7 +12,9 @@
         <p><label for="id_email">Email</label>{{ user_form.email }}</p>
         <p><label for="id_username">Username</label>{{ user_form.username }}</p>
         <p><label for="id_first_name">First name</label>{{ user_form.first_name }}</p>
+        <p><label for="id_last_name">Last name</label>{{ user_form.last_name }}</p>
         <p><label for="id_password">Password</label>{{ user_form.password }}</p>
+        <p><label for="id_password2">Confirm password</label>{{ user_form.password2 }}</p>
         <div class="button-row"><button type="submit"><i class="fa-solid fa-sparkles"></i> Create account</button><a href="{% url 'login' %}" class="text-muted">Sign in</a></div>
     </form>
 </div></div>
