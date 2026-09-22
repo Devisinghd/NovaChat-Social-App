@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm
 from .models import Profile
@@ -26,6 +27,7 @@ def user_login(request):
         form = LoginForm()
     return render(request, 'users/login.html', {'form': form})
 
+@require_http_methods(["GET", "POST"])
 def user_logout(request):
     logout(request)
     return render(request, 'users/logout.html')
