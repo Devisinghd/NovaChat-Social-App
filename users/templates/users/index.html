@@ -15,7 +15,11 @@
     {% for post in posts %}
         <article class="post-card">
             <div class="post-meta">
-                <span class="avatar">{{ post.user.username|first|upper }}</span>
+                {% if post.user.profile.photo %}
+                    <img src="{{ post.user.profile.photo.url }}" alt="Profile photo of {{ post.user.username }}" class="avatar profile-photo">
+                {% else %}
+                    <span class="avatar">{{ post.user.username|first|upper }}</span>
+                {% endif %}
                 <div>
                     <h2>{{ post.user.username }}</h2>
                     <p>Shared a moment</p>
@@ -26,6 +30,18 @@
             {% if post.image %}
                 <img class="post-image" src="{{ post.image.url }}" alt="Image shared by {{ post.user.username }}">
             {% endif %}
+            <div class="post-actions" aria-label="Post actions">
+                <button type="button" class="post-action btn-like{% if request.user in post.liked_by.all %} is-liked{% endif %}" data-post-id="{{ post.id }}" aria-label="Like {{ post.title }}" aria-pressed="{% if request.user in post.liked_by.all %}true{% else %}false{% endif %}">
+                    <img src="{% static 'users/images/like-icon.png' %}" alt="" class="like-icon">
+                </button>
+                <span class="like-count" aria-live="polite">{{ post.liked_by.count }}</span>
+                <button type="button" class="post-action" aria-label="Comment on {{ post.title }}">
+                    <img src="{% static 'users/images/comment-icon.png' %}" alt="" class="comment-icon">
+                </button>
+                <button type="button" class="post-action" aria-label="Share {{ post.title }}">
+                    <img src="{% static 'users/images/share-icon.png' %}" alt="" class="share-icon">
+                </button>
+            </div>
         </article>
     {% empty %}
         <div class="empty-state">
@@ -42,4 +58,33 @@
         <a class="primary-button" href="{% url 'create_post' %}"><i class="fa-solid fa-feather-pointed"></i> New moment</a>
     </aside>
     </div>
+    <script>
+        window.CSRF_TOKEN = '{{ csrf_token }}';
+        function sendLikeRequest(button) {
+            button.addClass('is-saving');
+            $.ajax({
+                method: 'POST',
+                url: "{% url 'like_post' %}",
+                data: {
+                    post_id: button.data('post-id'),
+                    csrfmiddlewaretoken: window.CSRF_TOKEN
+                }
+            }).done(function (response) {
+                button.toggleClass('is-liked', response.liked);
+                button.attr('aria-pressed', response.liked ? 'true' : 'false');
+                button.siblings('.like-count').text(response.count);
+            }).always(function () {
+                button.removeClass('is-saving');
+                var pendingClicks = button.data('pending-clicks') - 1;
+                button.data('pending-clicks', pendingClicks);
+                if (pendingClicks > 0) sendLikeRequest(button);
+            });
+        }
+
+        $(document).on('click', '.btn-like', function () {
+            var button = $(this);
+            button.data('pending-clicks', (button.data('pending-clicks') || 0) + 1);
+            if (!button.hasClass('is-saving')) sendLikeRequest(button);
+        });
+    </script>
 {% endblock %}
