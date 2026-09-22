@@ -25,10 +25,15 @@
             {% if post.image %}
                 <img class="post-image" src="{{ post.image.url }}" alt="Image shared by {{ post.user.username }}">
             {% endif %}
-            <div>
-                <a id="{{ post.id }}" class="btn-like rounded-button px-2 py-1">
+            <div class="post-actions">
+                {% if logged_in_user in post.liked_by.all %}
+                    <button type="button" id="{{ post.id }}" class="post-action btn-like is-liked" aria-label="Like {{ post.title }}" aria-pressed="true">
+                {% else %}
+                    <button type="button" id="{{ post.id }}" class="post-action btn-like" aria-label="Like {{ post.title }}" aria-pressed="false">
+                {% endif %}
                     <img src="{% static 'users/images/like-icon.png' %}" alt="Like icon" class="like-icon">
-                </a>
+                </button>
+                <span class="like-count" aria-live="polite">{{ post.liked_by.count }}</span>
                 <img src="{% static 'users/images/comment-icon.png' %}" alt="Comment icon" class="comment-icon">
                 <img src="{% static 'users/images/share-icon.png' %}" alt="Share icon" class="share-icon">
             </div>
@@ -50,22 +55,31 @@
     </div>
     <script type="text/javascript">
         window.CSRF_TOKEN = '{{ csrf_token }}';
-        $(document).on('click', '.btn-like', function() {
-            var post_id = this.id
+        function sendLikeRequest(button) {
+            button.addClass('is-saving');
             $.ajax({
-                method: "POST",
-                url: "/posts/like/",
+                method: 'POST',
+                url: "{% url 'like_post' %}",
                 data: {
-                    'post_id': post_id,
-                    'csrfmiddlewaretoken': window.CSRF_TOKEN
-                },
-                success: function(response) {
-                    console.log('Post liked/unliked successfully');
-                },
-                error: function(xhr, errmsg, err) {
-                    console.log('Error liking/unliking post');
+                    post_id: button.attr('id'),
+                    csrfmiddlewaretoken: window.CSRF_TOKEN
                 }
-           });
+            }).done(function(response) {
+                button.toggleClass('is-liked', response.liked);
+                button.attr('aria-pressed', response.liked ? 'true' : 'false');
+                button.siblings('.like-count').text(response.count);
+            }).always(function() {
+                button.removeClass('is-saving');
+                var pendingClicks = button.data('pending-clicks') - 1;
+                button.data('pending-clicks', pendingClicks);
+                if (pendingClicks > 0) sendLikeRequest(button);
+            });
+        }
+
+        $(document).on('click', '.btn-like', function() {
+            var button = $(this);
+            button.data('pending-clicks', (button.data('pending-clicks') || 0) + 1);
+            if (!button.hasClass('is-saving')) sendLikeRequest(button);
         });
 
     </script>
