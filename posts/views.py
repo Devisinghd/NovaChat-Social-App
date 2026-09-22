@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Post
@@ -20,13 +21,16 @@ def create_post(request):
 
 def feed(request):
     posts = Post.objects.all()
-    return render(request, 'posts/feed.html', {'posts': posts})
+    logged_in_user = request.user 
+    return render(request, 'posts/feed.html', {'posts': posts, 'logged_in_user': logged_in_user})
 
+@login_required
 def like_post(request):
-    posts = request.POST.get('post_id')
-    post = get_object_or_404(Post, id=posts)
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
     if post.liked_by.filter(id=request.user.id).exists():
         post.liked_by.remove(request.user)
+        liked = False
     else:
         post.liked_by.add(request.user)
-    return redirect('feed')
+        liked = True
+    return JsonResponse({'liked': liked, 'count': post.liked_by.count()})
