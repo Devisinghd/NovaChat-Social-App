@@ -21,10 +21,11 @@ class Post(models.Model):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-class Comment(models.Model):
+class Comments(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    body = models.TextField()
+    body = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
+    posted_by = models.CharField(max_length=100)
 
     class Meta:
         ordering = ['-created_at']
