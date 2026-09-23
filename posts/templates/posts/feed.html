@@ -34,7 +34,29 @@
                     <img src="{% static 'users/images/like-icon.png' %}" alt="Like icon" class="like-icon">
                 </button>
                 <span class="like-count" aria-live="polite">{{ post.liked_by.count }}</span>
-                <img src="{% static 'users/images/comment-icon.png' %}" alt="Comment icon" class="comment-icon">
+                <div>
+                    <img src="{% static 'users/images/comment-icon.png' %}" alt="Comment icon" class="comment-icon">
+                    {% for comment in post.comments.all %}
+                        <b>{{ comment.posted_by }}</b>: {{ comment.body }}
+                    {% endfor %}   
+                </div>
+                <div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div>
+                            <label for="">Add comment</label>
+                            <div>{{ comment_form.body }}
+                            </div>
+                            <div>
+                                <input type="hidden" name="post_id" id="post_id" value='{{ post.id }}'>
+                                <input type="hidden" name="posted_by" id="posted_by" value='{{ logged_in_user.username }}'>
+                            </div>
+                            <div>
+                                <button type='submit'>Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <img src="{% static 'users/images/share-icon.png' %}" alt="Share icon" class="share-icon">
             </div>
         </article>
