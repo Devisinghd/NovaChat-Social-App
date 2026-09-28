@@ -1,0 +1,15 @@
+{% extends 'users/base.html' %}
+{% block title %}Your Posts | NovaChat{% endblock %}
+{% block section_name %}Your Posts{% endblock %}
+
+{% block body %}
+<main class="posts-page">
+    <header class="page-heading posts-heading">
+        <p class="eyebrow">Personal archive</p>
+        <h1>Your posts</h1>
+        <p>Your moments, in one place.</p>
+    </header>
+
+    {% include 'users/_post_grid.html' %}
+</main>
+{% endblock %}
