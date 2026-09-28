@@ -1,0 +1,22 @@
+<div class="profile-post-grid" aria-label="Your posts">
+    {% for post in posts %}
+        <article class="profile-post-tile" aria-label="{{ post.title|default:post.caption|default:'Post' }}">
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.caption|default:post.title|default:'Photo post' }}">
+            {% else %}
+                <div class="profile-post-text">
+                    <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+                    {% if post.title %}<strong>{{ post.title }}</strong>{% endif %}
+                    {% if post.caption %}<p>{{ post.caption|truncatechars:110 }}</p>{% endif %}
+                </div>
+            {% endif %}
+        </article>
+    {% empty %}
+        <div class="profile-post-empty">
+            <i class="fa-regular fa-images" aria-hidden="true"></i>
+            <h2>No posts yet</h2>
+            <p>Your posts will appear here.</p>
+            <a class="primary-button" href="{% url 'create_post' %}"><i class="fa-solid fa-plus"></i> Create a post</a>
+        </div>
+    {% endfor %}
+</div>
