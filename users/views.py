@@ -36,8 +36,7 @@ def user_logout(request):
 def index(request):
     current_user = request.user
     posts = Post.objects.filter(user=current_user).order_by('-created_at')
-    profile = Profile.objects.get(user=current_user)
-    return render(request, 'users/index.html', {'posts': posts, 'profile': profile})
+    return render(request, 'users/posts.html', {'posts': posts})
 
 def register(request):
     if request.method == 'POST':
@@ -65,3 +64,19 @@ def edit(request):
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)
     return render(request, 'users/edit.html', {'user_form': user_form, 'profile_form': profile_form})
+
+
+@login_required
+@login_required(login_url='login')
+def profile(request):
+    profile = Profile.objects.get(user=request.user)
+    posts = Post.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'users/profile.html', {
+        'profile': profile,
+        'posts': posts,
+        'followers_count': 0,
+        'following_count': 0,
+    })
+
+def settings(request):
+    return render(request, 'users/settings.html')
