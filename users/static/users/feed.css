@@ -57,6 +57,288 @@
     object-fit: cover;
 }
 
+.profile-page,
+.posts-page {
+    width: min(100%, 820px);
+    margin: 0 auto;
+}
+
+.profile-header {
+    display: grid;
+    grid-template-columns: 10rem minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    padding: 1rem 1rem 2rem;
+}
+
+.profile-portrait {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-avatar {
+    display: grid;
+    width: 9rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 2px solid rgba(101, 217, 255, .48);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-avatar-fallback {
+    color: #101a2c;
+    background: linear-gradient(135deg, var(--lime), var(--cyan));
+    font: 700 3rem 'Space Grotesk', sans-serif;
+}
+
+.profile-copy {
+    display: grid;
+    min-width: 0;
+    gap: 1rem;
+}
+
+.profile-topline {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+}
+
+.profile-topline h1 {
+    min-width: 0;
+    margin: 0;
+    color: var(--text);
+    font: 600 1.55rem/1.2 'Space Grotesk', sans-serif;
+    overflow-wrap: anywhere;
+}
+
+.profile-settings {
+    flex: 0 0 auto;
+}
+
+.profile-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    color: var(--text);
+    font-size: .9rem;
+}
+
+.profile-stats a {
+    text-decoration: none;
+}
+
+.profile-stats a:hover {
+    color: var(--cyan);
+}
+
+.profile-stats strong {
+    font-weight: 700;
+}
+
+.profile-display-name {
+    margin: 0 0 .3rem;
+    color: var(--text);
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+.profile-bio-text {
+    margin: 0;
+    color: #d4dcef;
+    font-size: .9rem;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.profile-bio-empty {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    margin-top: .15rem;
+}
+
+.profile-action {
+    min-height: 2.4rem;
+    padding: .6rem .9rem;
+}
+
+.profile-action.secondary-button {
+    color: var(--text);
+    background: rgba(164, 180, 215, .1);
+    border: 1px solid var(--line);
+}
+
+.profile-posts-heading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .55rem;
+    min-height: 3.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--text);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.profile-posts-heading i {
+    color: var(--cyan);
+}
+
+.profile-post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .35rem;
+}
+
+.profile-post-tile {
+    position: relative;
+    min-width: 0;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--panel-solid);
+}
+
+.profile-post-tile > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-post-text {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: 1rem;
+    color: var(--text);
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.profile-post-text i {
+    color: var(--cyan);
+    font-size: 1.3rem;
+}
+
+.profile-post-text p {
+    display: -webkit-box;
+    margin: 0;
+    color: var(--muted);
+    font-size: .78rem;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+}
+
+.profile-post-empty {
+    grid-column: 1 / -1;
+    padding: 3rem 1rem;
+    color: var(--muted);
+    text-align: center;
+}
+
+.profile-post-empty > i {
+    color: var(--cyan);
+    font-size: 1.8rem;
+}
+
+.profile-post-empty h2,
+.profile-related-placeholder h2 {
+    margin: .8rem 0 .4rem;
+    color: var(--text);
+    font: 600 1.15rem 'Space Grotesk', sans-serif;
+}
+
+.profile-post-empty p,
+.profile-related-placeholder p {
+    margin: 0 0 1rem;
+    font-size: .88rem;
+}
+
+.profile-related-placeholder {
+    display: none;
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.profile-related-placeholder:target {
+    display: block;
+}
+
+.profile-related-placeholder a {
+    color: var(--cyan);
+    font-size: .85rem;
+    text-decoration: none;
+}
+
+.posts-heading h1 {
+    font-size: 2.8rem;
+}
+
+@media (max-width: 600px) {
+    .profile-header {
+        grid-template-columns: 5.5rem minmax(0, 1fr);
+        gap: 1rem;
+        padding: .5rem 0 1.5rem;
+    }
+
+    .profile-avatar {
+        width: 5.5rem;
+    }
+
+    .profile-copy {
+        gap: .75rem;
+    }
+
+    .profile-topline h1 {
+        font-size: 1.2rem;
+    }
+
+    .profile-stats {
+        gap: .7rem 1rem;
+        font-size: .78rem;
+    }
+
+    .profile-actions {
+        grid-column: 1 / -1;
+    }
+
+    .profile-action {
+        flex: 1 1 auto;
+        font-size: .74rem;
+    }
+
+    .profile-post-grid {
+        gap: .15rem;
+    }
+
+    .profile-post-text {
+        gap: .3rem;
+        padding: .4rem;
+    }
+
+    .profile-post-text p {
+        font-size: .68rem;
+    }
+}
+
 @keyframes like-pop {
     0% { transform: scale(1); }
     45% { transform: scale(1.45) rotate(-8deg); }
@@ -74,4 +356,229 @@
     text-align: left;
     cursor: pointer;
     font: inherit;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.app-layout {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.glass-sidebar {
+    position: fixed;
+    z-index: 30;
+    top: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    width: 4.5rem;
+    padding: 1rem .65rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    transition: width .2s ease, box-shadow .2s ease;
+}
+
+.glass-sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.glass-sidebar:hover,
+.glass-sidebar:focus-within {
+    width: 15rem;
+    overflow-x: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .45), inset 0 1px rgba(255, 255, 255, .08);
+}
+
+.glass-sidebar .brand {
+    justify-content: center;
+    padding: .25rem 0;
+}
+
+.glass-sidebar .brand > span:last-child {
+    display: none;
+    white-space: nowrap;
+}
+
+.glass-sidebar:hover .brand,
+.glass-sidebar:focus-within .brand {
+    justify-content: flex-start;
+    padding: .25rem .65rem;
+}
+
+.glass-sidebar:hover .brand > span:last-child,
+.glass-sidebar:focus-within .brand > span:last-child {
+    display: inline;
+}
+
+.glass-sidebar .sidebar-label {
+    display: none;
+}
+
+.sidebar-nav {
+    margin-top: 1.5rem;
+}
+
+.sidebar-nav .nav-item,
+.sidebar-bottom .nav-item {
+    justify-content: center;
+    width: 100%;
+    min-height: 2.8rem;
+    padding: .75rem .65rem;
+    white-space: nowrap;
+}
+
+.sidebar-nav .nav-item span,
+.sidebar-bottom .nav-item span {
+    display: inline-block;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-width .2s ease, opacity .15s ease;
+}
+
+.glass-sidebar:hover .sidebar-label,
+.glass-sidebar:focus-within .sidebar-label {
+    display: block;
+    margin: 1.5rem .7rem .6rem;
+}
+
+.glass-sidebar:hover .sidebar-nav,
+.glass-sidebar:focus-within .sidebar-nav {
+    margin-top: 0;
+}
+
+.glass-sidebar:hover .sidebar-nav .nav-item,
+.glass-sidebar:hover .sidebar-bottom .nav-item,
+.glass-sidebar:focus-within .sidebar-nav .nav-item,
+.glass-sidebar:focus-within .sidebar-bottom .nav-item {
+    justify-content: flex-start;
+}
+
+.glass-sidebar:hover .sidebar-nav .nav-item span,
+.glass-sidebar:hover .sidebar-bottom .nav-item span,
+.glass-sidebar:focus-within .sidebar-nav .nav-item span,
+.glass-sidebar:focus-within .sidebar-bottom .nav-item span {
+    max-width: 12rem;
+    opacity: 1;
+}
+
+.sidebar-nav .nav-item:hover {
+    transform: none;
+}
+
+.main-content {
+    width: calc(100% - 5.5rem);
+    height: calc(100vh - 2rem);
+    height: calc(100dvh - 2rem);
+    margin-left: 5.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+@media (max-width: 640px) {
+    .app-layout {
+        display: block;
+        padding: .5rem;
+    }
+
+    .glass-sidebar,
+    .glass-sidebar:hover,
+    .glass-sidebar:focus-within {
+        top: auto;
+        right: .5rem;
+        bottom: .5rem;
+        left: .5rem;
+        width: auto;
+        height: 4.25rem;
+        flex-direction: row;
+        align-items: center;
+        padding: .35rem;
+        overflow: hidden;
+        border-radius: 16px;
+    }
+
+    .glass-sidebar .brand,
+    .glass-sidebar .sidebar-label {
+        display: none;
+    }
+
+    .sidebar-nav,
+    .glass-sidebar:hover .sidebar-nav,
+    .glass-sidebar:focus-within .sidebar-nav {
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: space-around;
+        min-width: 0;
+        gap: .15rem;
+        margin: 0;
+    }
+
+    .sidebar-nav .nav-item,
+    .sidebar-bottom .nav-item,
+    .glass-sidebar:hover .sidebar-nav .nav-item,
+    .glass-sidebar:hover .sidebar-bottom .nav-item,
+    .glass-sidebar:focus-within .sidebar-nav .nav-item,
+    .glass-sidebar:focus-within .sidebar-bottom .nav-item {
+        flex: 1 1 0;
+        justify-content: center;
+        min-width: 2.5rem;
+        min-height: 3.25rem;
+        padding: .6rem .25rem;
+        transform: none;
+    }
+
+    .sidebar-nav .nav-item span,
+    .sidebar-bottom .nav-item span {
+        display: none;
+    }
+
+    .sidebar-bottom {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        margin: 0;
+    }
+
+    .logout-form {
+        display: flex;
+        margin: 0;
+    }
+
+    .main-content {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding-bottom: 4.75rem;
+        scrollbar-gutter: auto;
+    }
+
+    .topbar {
+        padding: 0 .35rem;
+    }
+
+    .topbar-date {
+        display: none;
+    }
+
+    .page-shell {
+        padding: 1.5rem .5rem 2rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .glass-sidebar,
+    .sidebar-nav .nav-item span,
+    .sidebar-bottom .nav-item span {
+        transition: none;
+    }
 }
