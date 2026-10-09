@@ -474,6 +474,95 @@ body {
     transform: none;
 }
 
+.settings-page {
+    width: min(100%, 760px);
+    margin: 0 auto;
+    padding: clamp(1rem, 4vw, 2.5rem) 0;
+    animation: rise .55s ease both;
+}
+
+.settings-heading {
+    margin-bottom: 2rem;
+}
+
+.settings-heading h1 {
+    margin: 0;
+    color: var(--text);
+    font: 600 2rem/1.15 'Space Grotesk', sans-serif;
+}
+
+.settings-directory {
+    display: grid;
+    gap: 1.8rem;
+}
+
+.settings-group h2 {
+    margin: 0 0 .55rem;
+    color: #a8c9e8;
+    font-size: .76rem;
+    font-weight: 600;
+}
+
+.settings-row {
+    border-bottom: 1px solid var(--line);
+}
+
+.settings-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 3.75rem;
+    padding: .5rem .65rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: background-color .2s ease;
+}
+
+.settings-link:hover,
+.settings-link:focus-visible {
+    border-radius: 8px;
+    background: rgba(164, 180, 215, .1);
+    outline: 1px solid rgba(164, 180, 215, .16);
+}
+
+.settings-icon {
+    display: grid;
+    width: 1.75rem;
+    flex: 0 0 1.75rem;
+    aspect-ratio: 1;
+    place-items: center;
+    color: #dce5f2;
+    font-size: 1.05rem;
+}
+
+.profile-icon {
+    color: #dce5f2;
+}
+
+.password-icon {
+    color: #dce5f2;
+}
+
+.reset-icon {
+    color: #dce5f2;
+}
+
+.settings-copy {
+    display: block;
+    min-width: 0;
+}
+
+.settings-copy strong {
+    font-size: .88rem;
+    font-weight: 500;
+}
+
+.settings-arrow {
+    margin-left: auto;
+    color: #7685a3;
+    font-size: .7rem;
+}
+
 .main-content {
     width: calc(100% - 5.5rem);
     height: calc(100vh - 2rem);
