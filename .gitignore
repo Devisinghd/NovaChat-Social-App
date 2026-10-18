@@ -23,7 +23,7 @@ media/
 staticfiles/
 static_root/
 
-# Logs & Backups
+# Logs & Backups 
 *.log
 *.bak
 
