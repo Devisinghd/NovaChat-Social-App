@@ -23,6 +23,13 @@ class Post(models.Model):
 
 class Comments(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name='authored_comments',
+        blank=True,
+        null=True,
+    )
     body = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
     posted_by = models.CharField(max_length=100)
