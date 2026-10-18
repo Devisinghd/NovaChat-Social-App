@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
 
 from users.models import Profile
@@ -48,3 +49,85 @@ class FeedViewTests(TestCase):
         self.assertContains(first_page, 'Older posts')
         self.assertEqual(second_page.status_code, 200)
         self.assertEqual(len(second_page.context['posts']), 1)
+
+
+class PostCommentsViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='thread-author',
+            password='test-password',
+        )
+        Profile.objects.create(user=self.user)
+        self.commenter = User.objects.create_user(
+            username='commenter',
+            password='test-password',
+        )
+        Profile.objects.create(user=self.commenter)
+        self.post = Post.objects.create(
+            user=self.user,
+            title='A thread post',
+            caption='Join the conversation',
+        )
+        self.url = f'/posts/{self.post.pk}/comments/'
+
+    def test_comments_page_shows_post_and_all_comments(self):
+        Comments.objects.create(
+            post=self.post,
+            author=self.commenter,
+            posted_by=self.commenter.username,
+            body='First reply',
+        )
+        Comments.objects.create(
+            post=self.post,
+            author=self.user,
+            posted_by='thread-author',
+            body='Second reply',
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'A thread post')
+        self.assertContains(response, 'Join the conversation')
+        self.assertContains(response, 'First reply')
+        self.assertContains(response, 'Second reply')
+        self.assertContains(response, '<strong>commenter</strong>', html=True)
+        self.assertEqual(response.context['comments'].count(), 2)
+
+    def test_authenticated_user_can_add_a_comment(self):
+        self.client.login(username='thread-author', password='test-password')
+
+        response = self.client.post(self.url, {'body': 'A new reply'})
+
+        self.assertRedirects(response, self.url)
+        comment = Comments.objects.get(post=self.post)
+        self.assertEqual(comment.body, 'A new reply')
+        self.assertEqual(comment.posted_by, 'thread-author')
+        self.assertEqual(comment.author, self.user)
+
+    def test_comment_authors_with_profile_photos_render_their_avatars(self):
+        self.client.force_login(self.user)
+        photo = SimpleUploadedFile(
+            'avatar.png',
+            b'not-a-real-image',
+            content_type='image/png',
+        )
+        self.commenter.profile.photo = photo
+        self.commenter.profile.save()
+        Comments.objects.create(
+            post=self.post,
+            author=self.commenter,
+            posted_by=self.commenter.username,
+            body='A reply with a profile',
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.commenter.profile.photo.url)
+        self.assertContains(response, '<strong>commenter</strong>', html=True)
+
+    def test_missing_post_returns_not_found(self):
+        response = self.client.get('/posts/99999/comments/')
+
+        self.assertEqual(response.status_code, 404)
