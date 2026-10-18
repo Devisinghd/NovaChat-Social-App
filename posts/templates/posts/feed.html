@@ -8,13 +8,12 @@
         <header class="feed-heading">
             <div>
                 <p class="eyebrow">Your community</p>
-                <h1>Latest moments</h1>
                 <p class="feed-intro">The latest moments shared across NovaChat.</p>
             </div>
             {% if request.user.is_authenticated %}
                 <a class="feed-create-link" href="{% url 'create_post' %}">
                     <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                    <span>Share a moment</span>
+                    <span>New Post</span>
                 </a>
             {% endif %}
         </header>
@@ -61,7 +60,7 @@
                                         <i class="fa-regular fa-heart" aria-hidden="true"></i>
                                     </a>
                                 {% endif %}
-                                <a class="post-action post-comment-link" href="/posts/{{ post.id }}/comments/" aria-label="View all {{ post.comment_count }} comment{{ post.comment_count|pluralize }}">
+                                <a class="post-action post-comment-link" href="{% url 'post_comments' post.id %}" aria-label="View all {{ post.comment_count }} comment{{ post.comment_count|pluralize }}">
                                     <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
                                     <span>{{ post.comment_count }}</span>
                                 </a>
@@ -85,11 +84,11 @@
 
                         <div class="post-comments" aria-label="Recent comments">
                             {% for comment in post.recent_comments %}
-                                <p><strong>{{ comment.posted_by }}</strong> {{ comment.body }}</p>
+                                <p><strong>{% if comment.author %}{{ comment.author.username }}{% else %}{{ comment.posted_by }}{% endif %}</strong> {{ comment.body }}</p>
                             {% endfor %}
                         </div>
                         {% if post.comment_count > 2 %}
-                            <a class="view-comments-link" href="/posts/{{ post.id }}/comments/">View all {{ post.comment_count }} comment{{ post.comment_count|pluralize }}</a>
+                            <a class="view-comments-link" href="{% url 'post_comments' post.id %}">View all {{ post.comment_count }} comment{{ post.comment_count|pluralize }}</a>
                         {% endif %}
 
                         {% if request.user.is_authenticated %}
