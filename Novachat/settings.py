@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'Chat',
+    'chat',
     'posts',
     'users',
     'django.contrib.admin',
@@ -140,3 +140,10 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'devm16410@gmail.com'
 EMAIL_HOST_PASSWORD = 'dugjmmyodzlbkmdc' 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+CHANNEL_LAYERS ={
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
