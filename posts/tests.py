@@ -3,6 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
 
 from users.models import Profile
+from users.models import Follow
 
 from .models import Comments, Post
 
@@ -49,6 +50,40 @@ class FeedViewTests(TestCase):
         self.assertContains(first_page, 'Older posts')
         self.assertEqual(second_page.status_code, 200)
         self.assertEqual(len(second_page.context['posts']), 1)
+
+    def test_feed_only_shows_follow_action_for_other_authors(self):
+        other_user = User.objects.create_user(
+            username='other-author',
+            password='test-password',
+        )
+        Profile.objects.create(user=other_user)
+        Post.objects.create(user=other_user, title='Another author post')
+        self.client.force_login(self.user)
+
+        response = self.client.get('/posts/feed/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['post_user'], self.user.username)
+        self.assertContains(response, 'Follow other-author')
+        self.assertNotContains(response, 'Follow feed-user')
+
+    def test_follow_action_in_feed_toggles_and_returns_to_feed(self):
+        other_user = User.objects.create_user(
+            username='other-author',
+            password='test-password',
+        )
+        Profile.objects.create(user=other_user)
+        Post.objects.create(user=other_user, title='Another author post')
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            '/toggle_follow/other-author/',
+            {'next': '/posts/feed/'},
+        )
+
+        self.assertRedirects(response, '/posts/feed/')
+        self.assertTrue(Follow.objects.filter(follower=self.user, following=other_user).exists())
+        self.assertContains(self.client.get('/posts/feed/'), 'Following')
 
 
 class PostCommentsViewTests(TestCase):
