@@ -32,6 +32,7 @@
                             <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"M j, Y · g:i A" }}</time>
                         </div>
                         {% if post.user.username != post_user %}
+                            <div class="post-header-actions">
                             {% if request.user.is_authenticated %}
                                 <form class="post-follow-form" method="post" action="{% url 'toggle_follow' post.user.username %}">
                                     {% csrf_token %}
@@ -45,10 +46,15 @@
                                     <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Follow
                                 </a>
                             {% endif %}
+                                <span class="post-more" aria-hidden="true">
+                                    <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        {% else %}
+                            <span class="post-more" aria-hidden="true">
+                                <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+                            </span>
                         {% endif %}
-                        <span class="post-more" aria-hidden="true">
-                            <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
-                        </span>
                     </header>
 
                     {% if post.image %}
