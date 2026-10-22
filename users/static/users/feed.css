@@ -1504,7 +1504,19 @@ body {
 }
 
 .post-follow-form {
-    margin: 0 0 0 auto;
+    margin: 0;
+}
+
+.post-header-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-left: auto;
+}
+
+.community-feed .post-header-actions .post-more {
+    margin: 0;
+    padding-left: .3rem;
 }
 
 .post-follow-button {
@@ -2018,9 +2030,14 @@ body.posts-feed-body {
 
 .comments-media > img {
     display: block;
-    width: 100%;
-    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
+    object-position: center;
 }
 
 .comments-text-art {
@@ -2172,6 +2189,39 @@ body.posts-feed-body {
     margin-right: .25rem;
     color: var(--text);
     font: 600 .8rem 'Space Grotesk', sans-serif;
+}
+
+.thread-comment-copy strong a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.thread-comment-copy strong a:hover,
+.thread-comment-copy strong a:focus-visible {
+    color: var(--cyan);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.thread-avatar a {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    color: inherit;
+    text-decoration: none;
+}
+
+.thread-avatar a:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+}
+
+.thread-avatar a span {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
 }
 
 .thread-comment-copy time {
