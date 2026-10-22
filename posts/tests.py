@@ -126,7 +126,11 @@ class PostCommentsViewTests(TestCase):
         self.assertContains(response, 'Join the conversation')
         self.assertContains(response, 'First reply')
         self.assertContains(response, 'Second reply')
-        self.assertContains(response, '<strong>commenter</strong>', html=True)
+        self.assertContains(
+            response,
+            '<strong><a href="/profile/commenter/">commenter</a></strong>',
+            html=True,
+        )
         self.assertEqual(response.context['comments'].count(), 2)
 
     def test_authenticated_user_can_add_a_comment(self):
@@ -160,7 +164,12 @@ class PostCommentsViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.commenter.profile.photo.url)
-        self.assertContains(response, '<strong>commenter</strong>', html=True)
+        self.assertContains(response, f'/profile/{self.commenter.username}/')
+        self.assertContains(
+            response,
+            f'<strong><a href="/profile/{self.commenter.username}/">commenter</a></strong>',
+            html=True,
+        )
 
     def test_missing_post_returns_not_found(self):
         response = self.client.get('/posts/99999/comments/')
