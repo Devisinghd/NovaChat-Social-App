@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'chat',
     'posts',
     'users',
@@ -147,3 +148,5 @@ CHANNEL_LAYERS ={
         'BACKEND':'channels.layers.InMemoryChannelLayer'
     }
 }
+
+ASGI_APPLICATION = "Novachat.asgi.application"
