@@ -14,47 +14,58 @@
 
 		<div class="profile-copy">
 			<div class="profile-topline">
-				<h1>{{ profile.user.username }}</h1>
-				<a class="profile-settings" href="{% url 'password_change' %}" aria-label="Account settings" title="Account settings"><i class="fa-solid fa-gear" aria-hidden="true"></i></a>
+				<div class="profile-identity">
+					<h1>{{ profile.user.username }}</h1>
+					<p class="profile-display-name">{{ profile.user.get_full_name|default:profile.user.username }}</p>
+				</div>
+				{% if is_own_profile %}
+					<a class="profile-settings" href="{% url 'settings_page' %}" aria-label="Account settings" title="Account settings"><i class="fa-solid fa-gear" aria-hidden="true"></i></a>
+				{% endif %}
 			</div>
 
 			<nav class="profile-stats" aria-label="Profile statistics">
-				<span><strong>{{ posts|length }}</strong> posts</span>
-				<a href="#followers"><strong>{{ followers_count }}</strong> followers</a>
-				<a href="#following"><strong>{{ following_count }}</strong> following</a>
+				<span><strong>{{ posts|length }}</strong><span>posts</span></span>
+				<a href="{% url 'followers_list' profile_user.username %}"><strong>{{ followers_count }}</strong><span>followers</span></a>
+				<a href="{% url 'following_list' profile_user.username %}"><strong>{{ following_count }}</strong><span>following</span></a>
 			</nav>
 
 			<div class="profile-bio-block">
-				<p class="profile-display-name">{{ profile.user.get_full_name|default:profile.user.username }}</p>
 				{% if profile.bio %}
 					<p class="profile-bio-text">{{ profile.bio|linebreaksbr }}</p>
 				{% else %}
 					<p class="profile-bio-text profile-bio-empty">No bio added yet.</p>
 				{% endif %}
+				{% if profile.website %}
+					<a class="profile-website" href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">
+						<i class="fa-solid fa-link" aria-hidden="true"></i>{{ profile.website }}
+					</a>
+				{% endif %}
 			</div>
 
 			<div class="profile-actions">
-				<a class="primary-button profile-action" href="{% url 'edit' %}"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit profile</a>
-				<a class="secondary-button profile-action" href="{% url 'create_post' %}"><i class="fa-solid fa-plus" aria-hidden="true"></i> Create post</a>
+				{% if is_own_profile %}
+					<a class="primary-button profile-action" href="{% url 'edit' %}"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit profile</a>
+					<a class="secondary-button profile-action" href="{% url 'create_post' %}"><i class="fa-solid fa-plus" aria-hidden="true"></i> Create post</a>
+				{% else %}
+					<form method="post" action="{% url 'toggle_follow' profile_user.username %}">
+						{% csrf_token %}
+						<button class="primary-button profile-action" type="submit">
+							{% if is_following %}<i class="fa-solid fa-user-minus" aria-hidden="true"></i> Unfollow{% else %}<i class="fa-solid fa-user-plus" aria-hidden="true"></i> Follow{% endif %}
+						</button>
+					</form>
+				{% endif %}
 			</div>
 		</div>
 	</section>
 
-	<div class="profile-posts-heading">
-		<i class="fa-solid fa-grid-2" aria-hidden="true"></i>
-		<span>Posts</span>
-	</div>
+	<nav class="profile-content-tabs" aria-label="Profile content">
+		<a class="profile-posts-heading is-active" href="#posts">
+			<i class="fa-solid fa-grid-2" aria-hidden="true"></i>
+			<span>Posts</span>
+		</a>
+	</nav>
+	<div id="posts">
 	{% include 'users/_post_grid.html' %}
-
-	<section class="profile-related-placeholder" id="followers" aria-labelledby="followers-heading">
-		<h2 id="followers-heading">Followers</h2>
-		<p>Follower accounts will appear here when following is available.</p>
-		<a href="#profile">Back to profile</a>
-	</section>
-	<section class="profile-related-placeholder" id="following" aria-labelledby="following-heading">
-		<h2 id="following-heading">Following</h2>
-		<p>Followed accounts will appear here when following is available.</p>
-		<a href="#profile">Back to profile</a>
-	</section>
+	</div>
 </main>
 {% endblock %}
