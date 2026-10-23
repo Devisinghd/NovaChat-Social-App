@@ -16,5 +16,11 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('edit/', views.edit, name='edit'),
     path('profile/', views.profile, name='profile'),
-    path('settings/', views.settings, name='settings'),
+    path('profile/<str:username>/', views.profile, name='user_profile'),
+    path('settings/', views.settings_page, name='settings_page'),
+    path('toggle_follow/<str:username>/', views.toggle_follow, name='toggle_follow'),
+    path('followers/<str:username>/', views.followers_list, name='followers_list'),
+    path('following/<str:username>/', views.following_list, name='following_list'),
+    path('followers/<str:username>/remove/', views.remove_follower, name='remove_follower'),
+    path('search/', views.post_user_profile_search, name='post_user_profile_search'),
 ]
