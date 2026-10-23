@@ -1,5 +1,41 @@
 {% extends "users/base.html" %}
+{% block title %}Settings | NovaChat{% endblock %}
+{% block section_name %}Settings{% endblock %}
 {% block body %}
-<a href="{% url 'password_change' %}"><span>Change Password</span></a>
-<a href="{% url 'edit' %}">Edit Profile</a>
+<main class="settings-page">
+    <header class="settings-heading">
+        <h1>Settings</h1>
+    </header>
+
+    <nav class="settings-directory" aria-label="Account settings">
+        <section class="settings-group" aria-labelledby="settings-account-heading">
+            <h2 id="settings-account-heading">Your account</h2>
+            <div class="settings-row">
+                <a class="settings-link" href="{% url 'edit' %}">
+                    <span class="settings-icon profile-icon"><i class="fa-regular fa-user" aria-hidden="true"></i></span>
+                    <span class="settings-copy"><strong>Edit profile</strong></span>
+                    <i class="fa-solid fa-chevron-right settings-arrow" aria-hidden="true"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="settings-group" aria-labelledby="settings-security-heading">
+            <h2 id="settings-security-heading">Security</h2>
+            <div class="settings-row">
+                <a class="settings-link" href="{% url 'password_change' %}">
+                    <span class="settings-icon password-icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span>
+                    <span class="settings-copy"><strong>Change password</strong></span>
+                    <i class="fa-solid fa-chevron-right settings-arrow" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="settings-row">
+                <a class="settings-link" href="{% url 'password_reset' %}">
+                    <span class="settings-icon reset-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+                    <span class="settings-copy"><strong>Reset password</strong></span>
+                    <i class="fa-solid fa-chevron-right settings-arrow" aria-hidden="true"></i>
+                </a>
+            </div>
+        </section>
+    </nav>
+</main>
 {% endblock %}
