@@ -1,4 +1,4 @@
 Django==6.1
 Pillow==12.3.0
 channels==0.6.0
-daphne==4.2.1
+daphne==4.2.3
