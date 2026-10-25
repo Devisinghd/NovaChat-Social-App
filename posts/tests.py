@@ -21,6 +21,13 @@ class FeedViewTests(TestCase):
             caption='A short caption',
         )
 
+    def test_homepage_uses_the_feed(self):
+        response = self.client.get('/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'posts/feed.html')
+        self.assertContains(response, 'A short caption')
+
     def test_feed_shows_only_two_latest_comments_and_links_to_full_thread(self):
         for index in range(5):
             Comments.objects.create(
