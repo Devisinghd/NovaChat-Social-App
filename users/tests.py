@@ -6,7 +6,7 @@ from posts.models import Post
 
 
 class ProfileViewTests(TestCase):
-	def test_login_redirects_to_posts_feed(self):
+	def test_login_redirects_to_home_feed(self):
 		User.objects.create_user(username='login-user', password='test-password')
 
 		response = self.client.post('/login/', {
@@ -14,7 +14,7 @@ class ProfileViewTests(TestCase):
 			'password': 'test-password',
 		})
 
-		self.assertRedirects(response, '/posts/feed/')
+		self.assertRedirects(response, '/')
 
 	def test_profile_page_redirects_anonymous_users_to_login(self):
 		response = self.client.get('/profile/')
@@ -141,7 +141,7 @@ class ProfileViewTests(TestCase):
 		self.assertRedirects(response, '/followers/list-owner/')
 		self.assertFalse(Follow.objects.filter(follower=follower, following=owner).exists())
 
-	def test_posts_page_uses_renamed_template_without_social_actions(self):
+	def test_homepage_renders_the_feed(self):
 		user = User.objects.create_user(username='profile-user', password='test-password')
 		Profile.objects.create(user=user)
 		Post.objects.create(user=user, title='First post', caption='A post caption')
@@ -149,8 +149,6 @@ class ProfileViewTests(TestCase):
 
 		response = self.client.get('/')
 
-		self.assertTemplateUsed(response, 'users/posts.html')
+		self.assertTemplateUsed(response, 'posts/feed.html')
 		self.assertContains(response, 'A post caption')
-		self.assertNotContains(response, 'btn-like')
-		self.assertNotContains(response, 'Comment on')
-		self.assertNotContains(response, 'Share First post')
+		self.assertContains(response, 'btn-like')
