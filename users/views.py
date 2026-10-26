@@ -36,12 +36,6 @@ def user_logout(request):
     logout(request)
     return render(request, 'users/logout.html')
 
-@login_required
-def index(request):
-    current_user = request.user
-    posts = Post.objects.filter(user=current_user).order_by('-created_at')
-    return render(request, 'users/posts.html', {'posts': posts})
-
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
@@ -64,6 +58,7 @@ def edit(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
+            return redirect('profile')
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)
