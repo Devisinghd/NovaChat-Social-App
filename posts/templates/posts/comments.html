@@ -1,0 +1,126 @@
+{% extends "users/base.html" %}
+{% block title %}Comments by {{ post.user.username }} | NovaChat{% endblock %}
+{% block section_name %}Comments{% endblock %}
+{% block body_class %}comments-page{% endblock %}
+
+{% block body %}
+    <div class="comments-backdrop">
+        <section class="comments-dialog" role="dialog" aria-modal="true" aria-labelledby="comments-title">
+            <div class="comments-media">
+                {% if post.image %}
+                    <img class="comments-post-image" src="{{ post.image.url }}" alt="Image shared by {{ post.user.username }}">
+                {% else %}
+                    <div class="comments-text-art" aria-hidden="true">
+                        <span><i class="fa-solid fa-asterisk"></i></span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="comments-panel">
+                <header class="comments-header">
+                    <div class="comments-author-avatar">
+                        {% if post.user.profile.photo %}
+                            <img src="{{ post.user.profile.photo.url }}" alt="">
+                        {% else %}
+                            <span aria-hidden="true">{{ post.user.username|first|upper }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="comments-author">
+                        <h1 id="comments-title">{{ post.user.username }}</h1>
+                        <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"M j, Y · g:i A" }}</time>
+                    </div>
+                    <a class="comments-close" href="{% url 'feed' %}" aria-label="Close comments">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </a>
+                </header>
+
+                <div class="comments-list" aria-label="Comments">
+                    {% if post.title or post.caption %}
+                        <article class="thread-comment post-description">
+                            <div class="thread-avatar">
+                                {% if post.user.profile.photo %}
+                                    <a href="{% url 'user_profile' post.user.username %}" aria-label="View {{ post.user.username }}'s profile"><img src="{{ post.user.profile.photo.url }}" alt=""></a>
+                                {% else %}
+                                    <a href="{% url 'user_profile' post.user.username %}"><span aria-hidden="true">{{ post.user.username|first|upper }}</span></a>
+                                {% endif %}
+                            </div>
+                            <div class="thread-comment-copy">
+                                <p>
+                                    <strong><a href="{% url 'user_profile' post.user.username %}">{{ post.user.username }}</a></strong>
+                                    {% if post.title %}<span>{{ post.title }}</span>{% endif %}
+                                    {% if post.caption %}<span>{{ post.caption }}</span>{% endif %}
+                                </p>
+                                <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"M j" }}</time>
+                            </div>
+                        </article>
+                    {% endif %}
+
+                    {% for comment in comments %}
+                        <article class="thread-comment">
+                            <div class="thread-avatar thread-avatar-fallback">
+                                {% if comment.author and comment.author.profile.photo %}
+                                    <a href="{% url 'user_profile' comment.author.username %}" aria-label="View {{ comment.author.username }}'s profile"><img src="{{ comment.author.profile.photo.url }}" alt=""></a>
+                                {% elif comment.author %}
+                                    <a href="{% url 'user_profile' comment.author.username %}">{{ comment.author.username|first|upper }}</a>
+                                {% else %}
+                                    <a href="{% url 'user_profile' comment.posted_by %}">{{ comment.posted_by|first|upper }}</a>
+                                {% endif %}
+                            </div>
+                            <div class="thread-comment-copy">
+                                <p>
+                                    <strong>
+                                        {% if comment.author %}
+                                            <a href="{% url 'user_profile' comment.author.username %}">{{ comment.author.username }}</a>
+                                        {% else %}
+                                            {{ comment.posted_by }}
+                                        {% endif %}
+                                    </strong>
+                                    {{ comment.body }}
+                                </p>
+                                <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M j, Y · g:i A" }}</time>
+                            </div>
+                        </article>
+                    {% empty %}
+                        <div class="comments-empty">
+                            <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
+                            <p>No comments yet</p>
+                            <span>Start the conversation.</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <footer class="comments-footer">
+                    <div class="comments-actions" aria-hidden="true">
+                        <i class="fa-regular fa-heart"></i>
+                        <i class="fa-regular fa-comment-dots"></i>
+                        <i class="fa-regular fa-paper-plane"></i>
+                    </div>
+                    <p class="comments-likes">{{ post.like_count }} appreciation{{ post.like_count|pluralize }}</p>
+                    <time class="comments-posted-time" datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|timesince }} ago</time>
+
+                    {% if request.user.is_authenticated %}
+                        <form class="thread-comment-form" method="post">
+                            {% csrf_token %}
+                            {% if comment_form.body.errors %}
+                                <div class="comment-form-errors" role="alert">{{ comment_form.body.errors }}</div>
+                            {% endif %}
+                            <label class="visually-hidden" for="thread-comment-input">Add a comment</label>
+                            <input
+                                id="thread-comment-input"
+                                type="text"
+                                name="body"
+                                maxlength="300"
+                                value="{{ comment_form.body.value|default_if_none:'' }}"
+                                placeholder="Add a comment..."
+                                required
+                            >
+                            <button type="submit">Post</button>
+                        </form>
+                    {% else %}
+                        <p class="thread-signin"><a href="{% url 'login' %}">Sign in</a> to leave a comment.</p>
+                    {% endif %}
+                </footer>
+            </div>
+        </section>
+    </div>
+{% endblock %}
