@@ -1,0 +1,137 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block title %}Chat with {{ recipient.username }} | NovaChat{% endblock %}
+{% block section_name %}Messages{% endblock %}
+{% block body_class %}chat-app-page{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'chat/chat.css' %}">{% endblock %}
+
+{% block body %}
+<section class="chat-page chat-room" aria-label="Conversation with {{ recipient.username }}">
+    <header class="chat-room-header">
+        <a class="chat-back-link" href="{% url 'chat_dashboard' %}" aria-label="Back to messages">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        </a>
+        <span class="chat-avatar chat-room-avatar" aria-hidden="true">
+            {% if recipient.profile.photo %}
+                <img src="{{ recipient.profile.photo.url }}" alt="">
+            {% else %}
+                <span>{{ recipient.username|first|upper }}</span>
+            {% endif %}
+        </span>
+        <div class="chat-room-identity">
+            <h1>{{ recipient.username }}</h1>
+            <span><i class="chat-status-dot" aria-hidden="true"></i> Direct conversation</span>
+        </div>
+        <span class="chat-room-mark" aria-hidden="true"><i class="fa-regular fa-comment-dots"></i></span>
+    </header>
+
+    <div class="chat-history" id="chat-box" role="log" aria-live="polite" aria-label="Message history">
+        {% for msg in chat_messages %}
+            <article class="chat-message {% if msg.sender_id == request.user.id %}chat-message-outgoing{% else %}chat-message-incoming{% endif %}">
+                {% if msg.sender_id != request.user.id %}
+                    <span class="chat-avatar chat-message-avatar" aria-hidden="true">
+                        {% if recipient.profile.photo %}
+                            <img src="{{ recipient.profile.photo.url }}" alt="">
+                        {% else %}
+                            <span>{{ recipient.username|first|upper }}</span>
+                        {% endif %}
+                    </span>
+                {% endif %}
+                <div class="chat-message-content">
+                    <p>{{ msg.chat_content }}</p>
+                    <time datetime="{{ msg.date|date:'c' }}">{{ msg.date|date:"g:i A" }}</time>
+                </div>
+            </article>
+        {% empty %}
+            <div class="chat-room-empty">
+                <span class="chat-empty-icon" aria-hidden="true"><i class="fa-regular fa-comments"></i></span>
+                <h2>Start the conversation</h2>
+                <p>Send {{ recipient.username }} a message to get things going.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <p class="chat-connection-status" id="chat-status" role="status">Connecting…</p>
+    <form class="chat-composer" id="chat-form">
+        <label class="sr-only" for="chat-input">Write a message</label>
+        <input id="chat-input" type="text" placeholder="Message {{ recipient.username }}…" autocomplete="off" maxlength="4000">
+        <button id="chat-submit" type="submit" aria-label="Send message" disabled>
+            <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+        </button>
+    </form>
+</section>
+
+{{ thread.id|json_script:"chat-thread-id" }}
+{{ request.user.username|json_script:"chat-current-user" }}
+<script>
+    const threadId = JSON.parse(document.getElementById('chat-thread-id').textContent);
+    const currentUser = JSON.parse(document.getElementById('chat-current-user').textContent);
+    const chatBox = document.getElementById('chat-box');
+    const chatInput = document.getElementById('chat-input');
+    const chatForm = document.getElementById('chat-form');
+    const sendButton = document.getElementById('chat-submit');
+    const chatStatus = document.getElementById('chat-status');
+    const wsScheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const chatSocket = new WebSocket(`${wsScheme}://${window.location.host}/ws/chat/${threadId}/`);
+
+    function appendMessage(username, message) {
+        const messageElement = document.createElement('article');
+        messageElement.className = `chat-message ${username === currentUser ? 'chat-message-outgoing' : 'chat-message-incoming'}`;
+
+        if (username !== currentUser) {
+            const avatar = document.createElement('span');
+            avatar.className = 'chat-avatar chat-message-avatar';
+            avatar.setAttribute('aria-hidden', 'true');
+            avatar.textContent = username.charAt(0).toUpperCase();
+            messageElement.appendChild(avatar);
+        }
+
+        const content = document.createElement('div');
+        content.className = 'chat-message-content';
+        const messageText = document.createElement('p');
+        messageText.textContent = message;
+        content.appendChild(messageText);
+        messageElement.appendChild(content);
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    chatSocket.onopen = function() {
+        chatStatus.textContent = 'Connected';
+        chatStatus.classList.add('is-connected');
+        sendButton.disabled = false;
+    };
+
+    chatSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        appendMessage(data.username, data.message);
+    };
+
+    chatSocket.onclose = function() {
+        chatStatus.textContent = 'Connection lost. Refresh to try again.';
+        chatStatus.classList.remove('is-connected');
+        sendButton.disabled = true;
+    };
+
+    chatSocket.onerror = function() {
+        chatStatus.textContent = 'Unable to connect right now.';
+        chatStatus.classList.remove('is-connected');
+        sendButton.disabled = true;
+    };
+
+    chatForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const message = chatInput.value.trim();
+        if (!message || chatSocket.readyState !== WebSocket.OPEN) {
+            return;
+        }
+
+        chatSocket.send(JSON.stringify({ message: message }));
+        chatInput.value = '';
+        chatInput.focus();
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+{% endblock %}

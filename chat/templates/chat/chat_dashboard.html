@@ -1,0 +1,71 @@
+{% extends "users/base.html" %}
+{% load static %}
+
+{% block title %}Messages | NovaChat{% endblock %}
+{% block section_name %}Messages{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'chat/chat.css' %}">{% endblock %}
+
+{% block body %}
+<section class="chat-page chat-dashboard" aria-labelledby="messages-title">
+    <header class="chat-page-heading">
+        <div>
+            <p class="chat-eyebrow">YOUR SPACE</p>
+            <h1 id="messages-title">Messages</h1>
+            <p class="chat-page-subtitle">Catch up with people in your orbit.</p>
+        </div>
+        <span class="chat-count">{{ my_threads|length }} conversation{{ my_threads|length|pluralize }}</span>
+    </header>
+
+    <div class="chat-dashboard-grid">
+        <section class="chat-panel inbox-panel" aria-labelledby="inbox-title">
+            <div class="chat-panel-heading">
+                <div>
+                    <h2 id="inbox-title">Your inbox</h2>
+                    <p>Recent conversations</p>
+                </div>
+                <span class="chat-panel-icon" aria-hidden="true"><i class="fa-regular fa-paper-plane"></i></span>
+            </div>
+
+            <div class="chat-list">
+                {% for thread in my_threads %}
+                    <a class="chat-list-item" href="{% url 'chatroom' thread.id %}">
+                        {% for participant in thread.participants.all %}
+                            {% if participant.pk != request.user.pk %}
+                                <span class="chat-avatar" aria-hidden="true">
+                                    {% if participant.profile.photo %}
+                                        <img src="{{ participant.profile.photo.url }}" alt="">
+                                    {% else %}
+                                        <span>{{ participant.username|first|upper }}</span>
+                                    {% endif %}
+                                </span>
+                                <span class="chat-list-copy">
+                                    <strong>{{ participant.username }}</strong>
+                                    <span>
+                                        {% if thread.last_message %}
+                                            {% if thread.last_message_sender == request.user.username %}You{% else %}{{ thread.last_message_sender }}{% endif %}:
+                                            {{ thread.last_message|truncatechars:42 }}
+                                        {% else %}
+                                            No messages yet · Start the conversation
+                                        {% endif %}
+                                    </span>
+                                </span>
+                                {% if thread.last_message_date %}
+                                    <time class="chat-list-time" datetime="{{ thread.last_message_date|date:'c' }}">{{ thread.last_message_date|date:"M j" }}</time>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <i class="fa-solid fa-chevron-right chat-list-arrow" aria-hidden="true"></i>
+                    </a>
+                {% empty %}
+                    <div class="chat-empty-state">
+                        <span class="chat-empty-icon" aria-hidden="true"><i class="fa-regular fa-comments"></i></span>
+                        <h3>Your inbox is quiet</h3>
+                        <p>Start a conversation with someone you follow.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </div>
+</section>
+{% endblock %}
