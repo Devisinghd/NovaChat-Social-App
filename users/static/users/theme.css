@@ -1,0 +1,177 @@
+:root {
+    color-scheme: dark;
+    --bg: #0a0b0f;
+    --panel: rgba(21, 25, 34, .88);
+    --panel-solid: #151922;
+    --line: rgba(164, 180, 215, .15);
+    --text: #f2f5ff;
+    --muted: #929db2;
+    --cyan: #65d9ff;
+    --violet: #9b8cff;
+    --lime: #d5f36a;
+}
+
+html {
+    background: var(--bg);
+}
+
+body {
+    color: var(--text);
+    background:
+        radial-gradient(ellipse at 78% 0%, rgba(101, 217, 255, .055), transparent 36rem),
+        radial-gradient(ellipse at 5% 100%, rgba(155, 140, 255, .035), transparent 32rem),
+        var(--bg);
+}
+
+.app-orbit {
+    border-color: rgba(101, 217, 255, .07);
+}
+
+.orbit-two {
+    border-color: rgba(155, 140, 255, .07);
+}
+
+.glass-sidebar {
+    background: linear-gradient(155deg, rgba(20, 24, 33, .97), rgba(13, 15, 21, .98));
+    border-color: var(--line);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .38), inset 0 1px rgba(255, 255, 255, .04);
+    backdrop-filter: blur(22px);
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, rgba(101, 217, 255, .12), rgba(101, 217, 255, .025));
+    border-color: rgba(101, 217, 255, .14);
+    box-shadow: inset 3px 0 var(--cyan);
+}
+
+.user-chip {
+    background: rgba(255, 255, 255, .025);
+}
+
+.topbar {
+    color: var(--muted);
+}
+
+.page-shell {
+    color: var(--text);
+}
+
+.post-card,
+.empty-state,
+.form-panel,
+.auth-card,
+.stat-panel {
+    color: var(--text);
+    background: linear-gradient(145deg, rgba(22, 27, 38, .96), rgba(15, 18, 25, .96));
+    border-color: var(--line);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .24), inset 0 1px rgba(255, 255, 255, .025);
+}
+
+.quick-panel {
+    background: linear-gradient(155deg, rgba(21, 27, 37, .95), rgba(15, 18, 25, .97));
+    border-color: var(--line);
+}
+
+.form-panel.bg-white {
+    color: var(--text);
+    background: linear-gradient(145deg, rgba(22, 27, 38, .98), rgba(15, 18, 25, .98));
+    border-color: var(--line);
+}
+
+.form-panel .text-gray-700 {
+    color: #c4ccda;
+}
+
+.field-control,
+.form-panel input,
+.form-panel textarea,
+.form-panel select,
+.auth-card input,
+.auth-card textarea,
+.auth-card select {
+    color: var(--text);
+    background: rgba(8, 10, 15, .78);
+    border-color: var(--line);
+}
+
+.field-control:focus,
+.form-panel input:focus,
+.form-panel textarea:focus,
+.form-panel select:focus,
+.auth-card input:focus,
+.auth-card textarea:focus,
+.auth-card select:focus {
+    border-color: rgba(101, 217, 255, .6);
+    box-shadow: 0 0 0 3px rgba(101, 217, 255, .1);
+}
+
+.primary-button,
+.secondary-button,
+button[type="submit"] {
+    color: #101a2c;
+    background: linear-gradient(120deg, var(--cyan), var(--lime));
+}
+
+.primary-button:hover,
+button[type="submit"]:hover {
+    box-shadow: 0 10px 25px rgba(101, 217, 255, .16);
+}
+
+.auth-card a,
+.settings-icon,
+.profile-icon,
+.password-icon,
+.reset-icon {
+    color: var(--cyan);
+}
+
+.settings-row {
+    border-color: var(--line);
+}
+
+.settings-link {
+    color: var(--text);
+}
+
+.settings-link:hover,
+.settings-link:focus-visible {
+    background: rgba(101, 217, 255, .055);
+    outline-color: rgba(101, 217, 255, .14);
+}
+
+.profile-bio-text {
+    color: #c4ccda;
+}
+
+.profile-related-placeholder {
+    background: var(--panel);
+    border-color: var(--line);
+}
+
+.profile-related-placeholder a {
+    color: var(--cyan);
+}
+
+.profile-post-tile {
+    background: var(--panel-solid);
+}
+
+.profile-post-text {
+    color: var(--text);
+}
+
+.profile-post-text p,
+.profile-post-empty {
+    color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
