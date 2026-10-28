@@ -1,0 +1,86 @@
+{% extends "users/base.html" %}
+{% block title %}Followers | NovaChat{% endblock %}
+{% block section_name %}Followers{% endblock %}
+{% block body %}
+<main class="follow-list-page">
+    <section class="follow-list-card" aria-labelledby="follow-list-title">
+        <header class="follow-list-header">
+            <a class="follow-list-back" href="{% url 'user_profile' profile_user.username %}" aria-label="Back to profile">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            </a>
+            <div>
+                <p class="eyebrow">{{ profile_user.username }}</p>
+                <h1 id="follow-list-title">Followers</h1>
+            </div>
+            <span class="follow-list-count">{{ followers|length }}</span>
+        </header>
+
+        <label class="follow-list-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <span class="visually-hidden">Search followers</span>
+            <input type="search" placeholder="Search followers..." data-follow-search>
+        </label>
+
+        <div class="follow-list-results" data-follow-results>
+            {% for follow in followers %}
+                <article class="follow-list-item" data-follow-user="{{ follow.follower.username|lower }} {{ follow.follower.get_full_name|lower }}">
+                    <a class="follow-list-person" href="{% url 'user_profile' follow.follower.username %}">
+                        {% if follow.follower.profile.photo %}
+                            <img class="follow-list-avatar" src="{{ follow.follower.profile.photo.url }}" alt="">
+                        {% else %}
+                            <span class="follow-list-avatar follow-list-avatar-fallback" aria-hidden="true">{{ follow.follower.username|first|upper }}</span>
+                        {% endif %}
+                        <span class="follow-list-person-copy">
+                            <strong>{{ follow.follower.username }}</strong>
+                            <span>{{ follow.follower.get_full_name|default:follow.follower.username }}</span>
+                        </span>
+                    </a>
+                    {% if request.user == profile_user %}
+                        <form method="post" action="{% url 'remove_follower' profile_user.username %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="follower" value="{{ follow.follower.username }}">
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button class="follow-list-action follow-list-remove" type="submit">Remove</button>
+                        </form>
+                    {% elif request.user != follow.follower %}
+                        <form method="post" action="{% url 'toggle_follow' follow.follower.username %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button class="follow-list-action{% if follow.is_following %} is-active{% endif %}" type="submit">
+                                {% if follow.is_following %}<i class="fa-solid fa-user-check" aria-hidden="true"></i> Following{% else %}<i class="fa-solid fa-user-plus" aria-hidden="true"></i> Follow{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% empty %}
+                <div class="follow-list-empty">
+                    <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+                    <p>No followers yet</p>
+                    <span>People following {{ profile_user.username }} will appear here.</span>
+                </div>
+            {% endfor %}
+            <p class="follow-list-no-results" data-follow-empty hidden>No matching accounts.</p>
+        </div>
+    </section>
+</main>
+<script>
+    (function () {
+        var search = document.querySelector('[data-follow-search]');
+        var results = document.querySelector('[data-follow-results]');
+        if (!search || !results) return;
+
+        var items = results.querySelectorAll('[data-follow-user]');
+        var emptyState = results.querySelector('[data-follow-empty]');
+        search.addEventListener('input', function () {
+            var query = search.value.trim().toLowerCase();
+            var visibleCount = 0;
+            items.forEach(function (item) {
+                var matches = item.dataset.followUser.indexOf(query) !== -1;
+                item.hidden = !matches;
+                if (matches) visibleCount += 1;
+            });
+            if (emptyState) emptyState.hidden = visibleCount !== 0;
+        });
+    }());
+</script>
+{% endblock %}
