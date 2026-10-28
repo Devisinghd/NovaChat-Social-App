@@ -1,0 +1,79 @@
+{% extends "users/base.html" %}
+{% block title %}Following | NovaChat{% endblock %}
+{% block section_name %}Following{% endblock %}
+{% block body %}
+<main class="follow-list-page">
+    <section class="follow-list-card" aria-labelledby="follow-list-title">
+        <header class="follow-list-header">
+            <a class="follow-list-back" href="{% url 'user_profile' profile_user.username %}" aria-label="Back to profile">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            </a>
+            <div>
+                <p class="eyebrow">{{ profile_user.username }}</p>
+                <h1 id="follow-list-title">Following</h1>
+            </div>
+            <span class="follow-list-count">{{ following|length }}</span>
+        </header>
+
+        <label class="follow-list-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <span class="visually-hidden">Search following</span>
+            <input type="search" placeholder="Search following..." data-follow-search>
+        </label>
+
+        <div class="follow-list-results" data-follow-results>
+            {% for follow in following %}
+                <article class="follow-list-item" data-follow-user="{{ follow.following.username|lower }} {{ follow.following.get_full_name|lower }}">
+                    <a class="follow-list-person" href="{% url 'user_profile' follow.following.username %}">
+                        {% if follow.following.profile.photo %}
+                            <img class="follow-list-avatar" src="{{ follow.following.profile.photo.url }}" alt="">
+                        {% else %}
+                            <span class="follow-list-avatar follow-list-avatar-fallback" aria-hidden="true">{{ follow.following.username|first|upper }}</span>
+                        {% endif %}
+                        <span class="follow-list-person-copy">
+                            <strong>{{ follow.following.username }}</strong>
+                            <span>{{ follow.following.get_full_name|default:follow.following.username }}</span>
+                        </span>
+                    </a>
+                    {% if request.user != follow.following %}
+                        <form method="post" action="{% url 'toggle_follow' follow.following.username %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button class="follow-list-action{% if follow.is_following %} is-active{% endif %}" type="submit">
+                                {% if follow.is_following %}<i class="fa-solid fa-user-check" aria-hidden="true"></i> Following{% else %}<i class="fa-solid fa-user-plus" aria-hidden="true"></i> Follow{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% empty %}
+                <div class="follow-list-empty">
+                    <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+                    <p>Not following anyone yet</p>
+                    <span>People followed by {{ profile_user.username }} will appear here.</span>
+                </div>
+            {% endfor %}
+            <p class="follow-list-no-results" data-follow-empty hidden>No matching accounts.</p>
+        </div>
+    </section>
+</main>
+<script>
+    (function () {
+        var search = document.querySelector('[data-follow-search]');
+        var results = document.querySelector('[data-follow-results]');
+        if (!search || !results) return;
+
+        var items = results.querySelectorAll('[data-follow-user]');
+        var emptyState = results.querySelector('[data-follow-empty]');
+        search.addEventListener('input', function () {
+            var query = search.value.trim().toLowerCase();
+            var visibleCount = 0;
+            items.forEach(function (item) {
+                var matches = item.dataset.followUser.indexOf(query) !== -1;
+                item.hidden = !matches;
+                if (matches) visibleCount += 1;
+            });
+            if (emptyState) emptyState.hidden = visibleCount !== 0;
+        });
+    }());
+</script>
+{% endblock %}
