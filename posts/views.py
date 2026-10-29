@@ -22,6 +22,7 @@ def create_post(request):
         form = PostForm()
     return render(request, 'posts/create_post.html', {'form': form})
 
+@login_required
 def feed(request):
     if request.method == "POST":
         if not request.user.is_authenticated:
