@@ -133,14 +133,20 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = '/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'devm16410@gmail.com'
-EMAIL_HOST_PASSWORD = 'dugjmmyodzlbkmdc' 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_USE_SSL = False
+#EMAIL_HOST_USER = 'devm16410@gmail.com'
+#EMAIL_HOST_PASSWORD = 'dugjmmyodzlbkmdc'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND','') 
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL','')
+EMAIL_VERIFICATION = os.getenv('EMAIL_VERIFICATION','True')
+EMAIL_OTP_EXPIRY_MINUTES = int(os.getenv('EMAIL_OTP_EXPIRY_MINUTES','10'))
+ANYMAIL = {
+    "BREVO_API_KEY":os.getenv("BREVO_API_KEY","")
+}
 
 
 CHANNEL_LAYERS ={
