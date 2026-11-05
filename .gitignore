@@ -46,3 +46,4 @@ Thumbs.db
 
 # Frontend dependencies
 node_modules/
+.env
