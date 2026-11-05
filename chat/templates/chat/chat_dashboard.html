@@ -16,7 +16,7 @@
         <span class="chat-count">{{ my_threads|length }} conversation{{ my_threads|length|pluralize }}</span>
     </header>
 
-    <div class="chat-dashboard-grid">
+    <div class="chat-dashboard-grid" id="chat-dashboard-grid">
         <section class="chat-panel inbox-panel" aria-labelledby="inbox-title">
             <div class="chat-panel-heading">
                 <div>
@@ -28,39 +28,78 @@
 
             <div class="chat-list">
                 {% for thread in my_threads %}
-                    <a class="chat-list-item" href="{% url 'chatroom' thread.id %}">
-                        {% for participant in thread.participants.all %}
-                            {% if participant.pk != request.user.pk %}
-                                <span class="chat-avatar" aria-hidden="true">
-                                    {% if participant.profile.photo %}
-                                        <img src="{{ participant.profile.photo.url }}" alt="">
-                                    {% else %}
-                                        <span>{{ participant.username|first|upper }}</span>
-                                    {% endif %}
-                                </span>
-                                <span class="chat-list-copy">
-                                    <strong>{{ participant.username }}</strong>
-                                    <span>
-                                        {% if thread.last_message %}
-                                            {% if thread.last_message_sender == request.user.username %}You{% else %}{{ thread.last_message_sender }}{% endif %}:
-                                            {{ thread.last_message|truncatechars:42 }}
+                    {% for participant in thread.participants.all %}
+                        {% if participant.pk != request.user.pk %}
+                            <article class="chat-list-item chat-thread-row">
+                                <a class="chat-thread-profile" href="{% url 'post_user_profile_search' participant.username %}" aria-label="View {{ participant.username }} profile">
+                                    <span class="chat-avatar" aria-hidden="true">
+                                        {% if participant.profile.photo %}
+                                            <img src="{{ participant.profile.photo.url }}" alt="">
                                         {% else %}
-                                            No messages yet · Start the conversation
+                                            <span>{{ participant.username|first|upper }}</span>
                                         {% endif %}
                                     </span>
-                                </span>
+                                    <span class="chat-list-copy">
+                                        <strong>{{ participant.username }}</strong>
+                                        <span>
+                                            {% if thread.last_message %}
+                                                {% if thread.last_message_sender == request.user.username %}You{% else %}{{ thread.last_message_sender }}{% endif %}:
+                                                {{ thread.last_message|truncatechars:42 }}
+                                            {% else %}
+                                                No messages yet · Start the conversation
+                                            {% endif %}
+                                        </span>
+                                    </span>
+                                </a>
                                 {% if thread.last_message_date %}
                                     <time class="chat-list-time" datetime="{{ thread.last_message_date|date:'c' }}">{{ thread.last_message_date|date:"M j" }}</time>
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        <i class="fa-solid fa-chevron-right chat-list-arrow" aria-hidden="true"></i>
-                    </a>
+                                <a class="chat-thread-open" href="{% url 'chatroom' thread.id %}" aria-label="Open conversation with {{ participant.username }}">
+                                    <i class="fa-solid fa-chevron-right chat-list-arrow" aria-hidden="true"></i>
+                                </a>
+                            </article>
+                        {% endif %}
+                    {% endfor %}
                 {% empty %}
                     <div class="chat-empty-state">
                         <span class="chat-empty-icon" aria-hidden="true"><i class="fa-regular fa-comments"></i></span>
                         <h3>Your inbox is quiet</h3>
                         <p>Start a conversation with someone you follow.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="chat-panel chat-partners-panel" aria-labelledby="chat-partners-title">
+            <div class="chat-panel-heading">
+                <div>
+                    <h2 id="chat-partners-title">Start a conversation</h2>
+                    <p>Your followers and people you follow</p>
+                </div>
+                <span class="chat-panel-icon" aria-hidden="true"><i class="fa-regular fa-paper-plane"></i></span>
+            </div>
+
+            <div class="chat-list">
+                {% for partner in chat_partners %}
+                    <a class="chat-list-item" href="{% url 'open_dm' partner.id %}">
+                        <span class="chat-avatar" aria-hidden="true">
+                            {% if partner.profile.photo %}
+                                <img src="{{ partner.profile.photo.url }}" alt="">
+                            {% else %}
+                                <span>{{ partner.username|first|upper }}</span>
+                            {% endif %}
+                        </span>
+                        <span class="chat-list-copy">
+                            <strong>{{ partner.username }}</strong>
+                            <span>Send a message</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-right chat-list-arrow" aria-hidden="true"></i>
+                    </a>
+                {% empty %}
+                    <div class="chat-empty-state">
+                        <span class="chat-empty-icon" aria-hidden="true"><i class="fa-solid fa-user-plus"></i></span>
+                        <h3>No people available</h3>
+                        <p>Follow someone or wait for a new follower to start chatting.</p>
                     </div>
                 {% endfor %}
             </div>
