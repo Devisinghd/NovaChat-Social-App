@@ -61,7 +61,7 @@
 
 .chat-dashboard-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
 }
 
@@ -129,6 +129,38 @@
     outline: none;
     background: rgba(101, 217, 255, .055);
     transform: translateY(-1px);
+}
+
+.chat-thread-profile {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: .85rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.chat-thread-profile:hover strong,
+.chat-thread-profile:focus-visible strong {
+    color: var(--chat-cyan);
+}
+
+.chat-thread-profile:focus-visible,
+.chat-thread-open:focus-visible {
+    border-radius: .5rem;
+    outline: 2px solid rgba(101, 217, 255, .45);
+    outline-offset: 3px;
+}
+
+.chat-thread-open {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+    place-items: center;
+    color: inherit;
+    text-decoration: none;
 }
 
 .chat-avatar {
@@ -254,6 +286,52 @@
         radial-gradient(ellipse at 85% 0%, rgba(101, 217, 255, .045), transparent 28rem),
         rgba(12, 15, 21, .82);
     box-shadow: 0 22px 65px rgba(0, 0, 0, .26), inset 0 1px rgba(255, 255, 255, .025);
+}
+
+.chat-room-profile {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: .75rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.chat-room-avatar-link,
+.chat-room-name-link,
+.chat-message-avatar-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.chat-room-avatar-link {
+    display: inline-grid;
+    flex: 0 0 auto;
+}
+
+.chat-message-avatar-link {
+    display: inline-grid;
+    flex: 0 0 auto;
+}
+
+.chat-room-avatar-link:focus-visible,
+.chat-room-name-link:focus-visible,
+.chat-message-avatar-link:focus-visible {
+    border-radius: .5rem;
+    outline: 2px solid rgba(101, 217, 255, .45);
+    outline-offset: 3px;
+}
+
+.chat-room-name-link:hover,
+.chat-room-name-link:focus-visible {
+    color: var(--chat-cyan);
+}
+
+.chat-room-profile:focus-visible {
+    border-radius: .75rem;
+    outline: 2px solid rgba(101, 217, 255, .45);
+    outline-offset: 3px;
 }
 
 .chat-room-header {
