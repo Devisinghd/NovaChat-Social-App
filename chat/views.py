@@ -1,25 +1,43 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, OuterRef, Subquery
+from django.db.models import Count
 from .models import Thread, Message
 from users.models import Follow
 
 @login_required
 def chat_dashboard(request):
     # 1. Fetch all private conversations the user is a part of (Your Inbox)
-    latest_messages = Message.objects.filter(thread_id=OuterRef('pk')).order_by('-date')
-    my_threads = request.user.chat_threads.annotate(
-        last_message=Subquery(latest_messages.values('chat_content')[:1]),
-        last_message_sender=Subquery(latest_messages.values('sender__username')[:1]),
-        last_message_date=Subquery(latest_messages.values('date')[:1]),
-    ).prefetch_related('participants__profile')
+    my_threads = []
+    candidate_threads = Thread.objects.filter(participants=request.user).prefetch_related(
+        'participants__profile',
+        'messages__sender',
+    ).order_by('-updated_at')
 
-    # 2. Fetch followings (to let users start new chats from their list)
-    chat_partners = Follow.objects.filter(follower=request.user).select_related(
-        'following',
-        'following__profile',
+    for thread in candidate_threads:
+        if len(thread.participants.all()) != 2:
+            continue
+
+        latest_message = thread.messages.order_by('-date', '-pk').first()
+        thread.last_message = latest_message.chat_content if latest_message else None
+        thread.last_message_sender = latest_message.sender.username if latest_message else None
+        thread.last_message_date = latest_message.date if latest_message else None
+        my_threads.append(thread)
+
+    my_threads.sort(
+        key=lambda thread: thread.last_message_date or thread.updated_at,
+        reverse=True,
     )
+
+    # Fetch people on either side of the follow relationship for starting chats
+    incoming_partner_ids = Follow.objects.filter(following=request.user).values_list(
+        'follower_id', flat=True,
+    )
+    outgoing_partner_ids = Follow.objects.filter(follower=request.user).values_list(
+        'following_id', flat=True,
+    )
+    partner_ids = set(incoming_partner_ids) | set(outgoing_partner_ids)
+    chat_partners = User.objects.filter(pk__in=partner_ids).select_related('profile').order_by('username')
 
     return render(request, 'chat/chat_dashboard.html', {
         'my_threads': my_threads,
