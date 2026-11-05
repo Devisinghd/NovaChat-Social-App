@@ -16,22 +16,36 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    def load_dotenv():
+        env_path = BASE_DIR / '.env'
+        if env_path.is_file():
+            for line in env_path.read_text(encoding='utf-8').splitlines():
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ.setdefault(key.strip(), value.strip().strip('"\''))
+
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#6+n$zh*z3f)xf7e#2)pkzd8q9=&pm0b6p0t=+s^u%4=b6x$ld'
+SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-me-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'anymail',
     'daphne',
     'chat',
     'posts',
@@ -134,25 +148,48 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = '/'
 
 
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
-#EMAIL_USE_SSL = False
-#EMAIL_HOST_USER = 'devm16410@gmail.com'
-#EMAIL_HOST_PASSWORD = 'dugjmmyodzlbkmdc'
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND','') 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL','')
-EMAIL_VERIFICATION = os.getenv('EMAIL_VERIFICATION','True')
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND','django.core.mail.backends.smtp.EmailBackend',) 
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL','Novachat <noreply@example.com>',)
+EMAIL_VERIFICATION = os.getenv('EMAIL_VERIFICATION','True').lower() == 'true'
 EMAIL_OTP_EXPIRY_MINUTES = int(os.getenv('EMAIL_OTP_EXPIRY_MINUTES','10'))
 ANYMAIL = {
-    "BREVO_API_KEY":os.getenv("BREVO_API_KEY","")
-}
-
-
-CHANNEL_LAYERS ={
-    'default':{
-        'BACKEND':'channels.layers.InMemoryChannelLayer'
-    }
+    "BREVO_API_KEY":os.getenv("BREVO_API_KEY",""),
 }
 
 ASGI_APPLICATION = "Novachat.asgi.application"
+
+# Use in-memory fallbacks when optional Redis-backed integrations are unavailable.
+try:
+    import channels_redis  # noqa: F401
+    import django_redis  # noqa: F401
+except ImportError:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "novachat-local-cache",
+        }
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("127.0.0.1", 6379)],
+            },
+        },
+    }
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379/1",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
+        }
+    }
