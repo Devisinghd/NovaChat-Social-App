@@ -7,7 +7,7 @@ from users.models import Follow
 
 
 class ChatDashboardTests(TestCase):
-    def test_dashboard_displays_followed_user_and_links_to_their_dm(self):
+    def test_dashboard_displays_followers_followings_and_links_to_their_dm(self):
         current_user = User.objects.create_user(
             username='current-user',
             password='test-password',
@@ -28,12 +28,31 @@ class ChatDashboardTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'chat-partner')
+        self.assertContains(response, 'incoming-follower')
         self.assertContains(
             response,
             reverse('open_dm', args=[chat_partner.pk]),
         )
+        self.assertContains(
+            response,
+            reverse('open_dm', args=[follower.pk]),
+        )
         self.assertNotContains(response, 'current-user')
-        self.assertNotContains(response, 'incoming-follower')
+
+    def test_inbox_excludes_a_thread_without_two_participants(self):
+        current_user = User.objects.create_user(
+            username='inbox-owner',
+            password='test-password',
+        )
+        stale_thread = Thread.objects.create()
+        stale_thread.participants.add(current_user)
+        self.client.force_login(current_user)
+
+        response = self.client.get(reverse('chat_dashboard'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Your inbox is quiet')
+        self.assertContains(response, '0 conversations')
 
     def test_inbox_shows_the_latest_message_preview(self):
         current_user = User.objects.create_user(
@@ -62,6 +81,10 @@ class ChatDashboardTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'inbox-partner')
+        self.assertContains(
+            response,
+            reverse('post_user_profile_search', args=['inbox-partner']),
+        )
         self.assertContains(response, 'Latest inbox preview')
         self.assertContains(response, 'You')
         self.assertNotContains(response, 'Earlier message')
@@ -89,6 +112,14 @@ class ChatRoomTests(TestCase):
         response = self.client.get(reverse('chatroom', args=[thread.pk]))
 
         self.assertEqual(response.status_code, 200)
+        profile_url = reverse(
+            'post_user_profile_search',
+            args=['message-sender'],
+        )
+        self.assertContains(response, profile_url)
+        self.assertContains(response, 'chat-room-avatar-link')
+        self.assertContains(response, 'chat-room-name-link')
+        self.assertContains(response, 'chat-message-avatar-link')
         self.assertContains(response, '&lt;img src=x onerror=alert(1)&gt;')
         self.assertNotContains(response, '<img src=x onerror=alert(1)>')
 
