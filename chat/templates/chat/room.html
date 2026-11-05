@@ -12,16 +12,20 @@
         <a class="chat-back-link" href="{% url 'chat_dashboard' %}" aria-label="Back to messages">
             <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
         </a>
-        <span class="chat-avatar chat-room-avatar" aria-hidden="true">
-            {% if recipient.profile.photo %}
-                <img src="{{ recipient.profile.photo.url }}" alt="">
-            {% else %}
-                <span>{{ recipient.username|first|upper }}</span>
-            {% endif %}
-        </span>
-        <div class="chat-room-identity">
-            <h1>{{ recipient.username }}</h1>
-            <span><i class="chat-status-dot" aria-hidden="true"></i> Direct conversation</span>
+        <div class="chat-room-profile">
+            <a class="chat-room-avatar-link" href="{% url 'post_user_profile_search' recipient.username %}" aria-label="View {{ recipient.username }} profile picture">
+                <span class="chat-avatar chat-room-avatar" aria-hidden="true">
+                    {% if recipient.profile.photo %}
+                        <img src="{{ recipient.profile.photo.url }}" alt="">
+                    {% else %}
+                        <span>{{ recipient.username|first|upper }}</span>
+                    {% endif %}
+                </span>
+            </a>
+            <div class="chat-room-identity">
+                <h1><a class="chat-room-name-link" href="{% url 'post_user_profile_search' recipient.username %}" aria-label="View {{ recipient.username }} profile">{{ recipient.username }}</a></h1>
+                <span><i class="chat-status-dot" aria-hidden="true"></i> Direct conversation</span>
+            </div>
         </div>
         <span class="chat-room-mark" aria-hidden="true"><i class="fa-regular fa-comment-dots"></i></span>
     </header>
@@ -30,13 +34,15 @@
         {% for msg in chat_messages %}
             <article class="chat-message {% if msg.sender_id == request.user.id %}chat-message-outgoing{% else %}chat-message-incoming{% endif %}">
                 {% if msg.sender_id != request.user.id %}
-                    <span class="chat-avatar chat-message-avatar" aria-hidden="true">
-                        {% if recipient.profile.photo %}
-                            <img src="{{ recipient.profile.photo.url }}" alt="">
-                        {% else %}
-                            <span>{{ recipient.username|first|upper }}</span>
-                        {% endif %}
-                    </span>
+                    <a class="chat-message-avatar-link" href="{% url 'post_user_profile_search' recipient.username %}" aria-label="View {{ recipient.username }} profile picture">
+                        <span class="chat-avatar chat-message-avatar" aria-hidden="true">
+                            {% if recipient.profile.photo %}
+                                <img src="{{ recipient.profile.photo.url }}" alt="">
+                            {% else %}
+                                <span>{{ recipient.username|first|upper }}</span>
+                            {% endif %}
+                        </span>
+                    </a>
                 {% endif %}
                 <div class="chat-message-content">
                     <p>{{ msg.chat_content }}</p>
