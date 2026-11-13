@@ -9,8 +9,8 @@
     <p>A quieter way to collect the moments that are yours.</p>
     <form action="" method="post">
         {% csrf_token %}
-        <p><label for="id_email">Email</label>{{ user_form.email }}</p>
         <p><label for="id_username">Username</label>{{ user_form.username }}</p>
+        <p><label for="id_email">Email</label>{{ user_form.email }}</p>
         <p><label for="id_first_name">First name</label>{{ user_form.first_name }}</p>
         <p><label for="id_last_name">Last name</label>{{ user_form.last_name }}</p>
         <p><label for="id_password">Password</label>{{ user_form.password }}</p>
