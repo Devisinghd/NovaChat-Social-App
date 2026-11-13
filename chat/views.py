@@ -7,7 +7,7 @@ from users.models import Follow
 
 @login_required
 def chat_dashboard(request):
-    # 1. Fetch all private conversations the user is a part of (Your Inbox)
+    # 1. Fetch all private conversations the user is a part of inbox
     my_threads = []
     candidate_threads = Thread.objects.filter(participants=request.user).prefetch_related(
         'participants__profile',
