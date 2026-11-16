@@ -40,6 +40,10 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'novachat-social-app.onrender.com,localhost,127.0.0.1').split(',') if host.strip()]
 
+CSRF_TRUSTED_ORIGIN = [
+    'https://novachat-social-app.onrender.com',
+]
+
 RUNNING_TESTS = 'tests' in sys.argv
 # Application definition
 
