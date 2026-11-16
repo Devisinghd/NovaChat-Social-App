@@ -23,7 +23,7 @@ class Profile(models.Model):
 
 class EmailVerificationCode(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    code_hash = models.CharField(max_length=50)
+    code_hash = models.CharField(max_length=255)
     expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     attempts = models.PositiveIntegerField(default=0)
