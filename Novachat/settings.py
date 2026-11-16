@@ -12,21 +12,20 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    def load_dotenv():
-        env_path = BASE_DIR / '.env'
-        if env_path.is_file():
-            for line in env_path.read_text(encoding='utf-8').splitlines():
-                line = line.strip()
-                if line and not line.startswith('#') and '=' in line:
-                    key, value = line.split('=', 1)
-                    os.environ.setdefault(key.strip(), value.strip().strip('"\''))
+def load_dotenv(dotenv_path=None):
+    """Load simple KEY=VALUE entries without requiring python-dotenv."""
+    env_path = Path(dotenv_path) if dotenv_path else BASE_DIR / '.env'
+    if env_path.is_file():
+        for line in env_path.read_text(encoding='utf-8').splitlines():
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                os.environ.setdefault(key.strip(), value.strip().strip("\"'\\"))
 
 load_dotenv(BASE_DIR / '.env')
 
@@ -41,7 +40,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
 
-
+RUNNING_TESTS = 'tests' in sys.argv
 # Application definition
 
 INSTALLED_APPS = [
@@ -55,11 +54,14 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -91,12 +93,25 @@ WSGI_APPLICATION = 'Novachat.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = os.getenv('DATABASE_URL', ' ')
+if DATABASE_URL:
+    import dj_database_url
+
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -147,7 +162,30 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = '/'
 
+# Cloudinary configuration
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles":{
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },  
+}
+STATICSTORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage  '
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', ''),
+    'SECURE': True,
+}
+
+if DEBUG and RUNNING_TESTS:
+    STORAGES['defalult'] = {
+        'BACKEND' : 'django.core.file.storage.FileSystemStorage',
+    }
+
+# Email configuration
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND','django.core.mail.backends.smtp.EmailBackend',) 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL','Novachat <noreply@example.com>',)
 EMAIL_VERIFICATION = os.getenv('EMAIL_VERIFICATION','True').lower() == 'true'
@@ -193,3 +231,5 @@ else:
             }
         }
     }
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
