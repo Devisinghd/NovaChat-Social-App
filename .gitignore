@@ -47,3 +47,4 @@ Thumbs.db
 # Frontend dependencies
 node_modules/
 .env
+AGENTS.md
