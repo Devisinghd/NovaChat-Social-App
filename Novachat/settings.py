@@ -200,40 +200,29 @@ ANYMAIL = {
 
 ASGI_APPLICATION = "Novachat.asgi.application"
 
-# Use in-memory fallbacks when optional Redis-backed integrations are unavailable.
-try:
-    import channels_redis  # noqa: F401
-    import django_redis  # noqa: F401
-except ImportError:
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels.layers.InMemoryChannelLayer",
-        },
-    }
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "novachat-local-cache",
-        }
-    }
-else:
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [("127.0.0.1", 6379)],
-            },
-        },
-    }
+# Redis configuration
 
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://127.0.0.1:6379/1",
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            }
+import channels_redis  # noqa: F401
+import django_redis  # noqa: F401
+
+REDIS_URL = os.getenv('REDIS_URL','redis://127.0.0.1:6379')
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
+}
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
