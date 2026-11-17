@@ -1,5 +1,5 @@
 {% extends "users/base.html" %}
-{% block title %}{{ profile.user.username }} | NovaChat{% endblock %}
+{% block title %}{{ profile.user.username|title }} | NovaChat{% endblock %}
 {% block section_name %}Profile{% endblock %}
 {% block body %}
 <main class="profile-page" id="profile">
