@@ -14,13 +14,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.http import JsonResponse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_GET
 from django.contrib import admin
 from django.urls import path , include
 from django.conf import settings
 from django.conf.urls.static import static
 from posts import views as post_views
 
+@never_cache
+@require_GET
+def health_check(request):
+    return JsonResponse({"status": "ok"}, status=200)
+
 urlpatterns = [
+    path('health/', health_check, name='health_check'), 
     path('admin/', admin.site.urls),
     path('', post_views.feed, name='feed'),
     path('', include('users.urls')),
@@ -28,3 +37,5 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
 ] 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
